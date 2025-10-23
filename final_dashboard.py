@@ -43,7 +43,7 @@ def load_and_process_data(file_path):
     
     return df
 
-df = load_and_process_data('growth_log_v2_f.csv')
+df = load_and_process_data('growth_log_v2_f_v2.csv')
 
 # --- 2. 대시보드 제목 ---
 st.title("🍁 메이플스토리 260+ 유저 성장 궤적 분석")
@@ -131,3 +131,7 @@ with st.expander("▶️ 애니메이션으로 시간에 따른 레벨 분포 �
     
     # 대시보드에 애니메이션 차트 표시
     st.plotly_chart(fig_animation, use_container_width=True)
+
+    # ... 기존 코드 맨 아래 ...
+
+# 최종 배포를 위한 테스트 주석
