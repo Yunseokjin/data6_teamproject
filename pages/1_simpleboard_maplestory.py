@@ -31,8 +31,8 @@ def load_data(file_path):
     
     return df
 
-df = load_data('growth_log_v2_f.csv') # 파일 경로를 실제 파일 위치에 맞게 수정해주세요.
-
+FILE_PATH = "growth_log_v2_f_v2.csv" 
+df = pd.read_csv(FILE_PATH)
 # --- 3. 대시보드 UI 구성 ---
 
 # 제목

@@ -43,7 +43,8 @@ def load_and_process_data(file_path):
     
     return df
 
-df = load_and_process_data('growth_log_v2_f_v2.csv')
+FILE_PATH = "growth_log_v2_f_v2.csv"
+df = pd.read_csv(FILE_PATH)
 
 # --- 2. 대시보드 제목 ---
 st.title("🍁 메이플스토리 260+ 유저 성장 궤적 분석")
