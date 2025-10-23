@@ -19,7 +19,7 @@ plt.rcParams['axes.unicode_minus'] = False
 
 # ★★★ 프로젝트의 메인 데이터 파일을 정확히 가리키도록 경로 설정 ★★★
 # (현재 파일은 pages 폴더 안에 있으므로, 상위 폴더의 파일을 가리키려면 '../'를 사용합니다.)
-FILE_PATH = "../growth_log_v2_f.csv" 
+FILE_PATH = "../growth_log_v2_f_v2.csv" 
 
 @st.cache_data
 def load_data(path):
