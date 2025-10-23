@@ -97,3 +97,37 @@ with col4:
     analysis_df3 = df[df['weekly_exp_gain'] > 0].copy()
     fig3 = px.box(analysis_df3, x='has_guild', y='weekly_exp_gain', color='has_guild', title='길드 가입 여부에 따른 주간 경험치 획득량 분포', labels={'has_guild': '길드 가입 여부', 'weekly_exp_gain': '주간 경험치 획득량'}, notched=True)
     st.plotly_chart(fig3, use_container_width=True)
+
+# ==================================================================
+# ★★★★★ 바로 이 부분이 추가된 애니메이션 차트입니다! ★★★★★
+# ==================================================================
+st.markdown("---")
+st.subheader("④ [참고] 동적 시각화로 유저 여정 살펴보기")
+
+# st.expander를 사용해 기본적으로는 내용을 숨겨둡니다.
+with st.expander("▶️ 애니메이션으로 시간에 따른 레벨 분포 변화 보기 (클릭하여 펼치기)"):
+    st.info("타임라인 슬라이더나 재생 버튼을 눌러 시간의 흐름에 따른 유저 분포의 변화를 동적으로 확인할 수 있습니다.")
+    
+    # 애니메이션을 위한 데이터 준비
+    animation_df = heatmap_source_df.copy()
+    animation_df['date_str'] = animation_df['date'].dt.strftime('%Y-%m-%d')
+    level_order = [f"{i}~{i+4}" for i in range(260, 301, 5)[:-1]]
+
+    # 애니메이션 바 차트 생성
+    fig_animation = px.bar(
+        animation_df.sort_values('date'),
+        x='level_range',
+        y='percentage',
+        color='level_range',
+        animation_frame='date_str',
+        facet_row='activity_status',
+        title='시간에 따른 활동 상태별 레벨 분포 변화 (애니메이션)',
+        labels={'level_range': '레벨 구간', 'percentage': '해당 구간 유저 비율 (%)', 'date_str': '날짜'},
+        range_y=[0, 100],
+        category_orders={'level_range': level_order}
+    )
+    fig_animation.update_yaxes(title_text='유저 비율 (%)')
+    fig_animation.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+    
+    # 대시보드에 애니메이션 차트 표시
+    st.plotly_chart(fig_animation, use_container_width=True)
