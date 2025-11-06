@@ -4,12 +4,10 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-import sys
-sys.path.append('..')
-
-# from utils import load_and_preprocess_data # 1. 공통 도우미 임포트
-# sys.path에 상위 폴더가 추가되었으므로 이제 모듈을 찾을 수 있어야 합니다.
-from utils import load_and_preprocess_data # 1. 공통 도우미 임포트
+# ⭐⭐⭐ 이전에 추가했던 sys.path 관련 코드를 모두 제거하고, ⭐⭐⭐
+# ⭐⭐⭐ 이 코드로 변경합니다. ⭐⭐⭐
+from .utils import load_and_preprocess_data # 1. 공통 도우미 임포트
+# (주의: from utils... 가 아니라 from .utils... 입니다.)
 
 # --- 데이터 불러오기 ---
 # 모든 전처리는 utils.py가 책임집니다.
