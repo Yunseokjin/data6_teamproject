@@ -8,8 +8,6 @@ from utils import load_and_preprocess_data # 1. 공통 도우미 임포트
 # --- 데이터 불러오기 ---
 # 모든 전처리는 utils.py가 책임집니다.
 df = load_and_preprocess_data('growth_log_v2_f_v2.csv')
-user_df = load_and_preprocess_data('candidates_챌린저스_lv260_and_above.csv')
-user_df['character_level'] = user_df['character_level'].astype(int)
 
 # --- 대시보드 UI 구성 ---
 st.title("🍁 챌린저스 서버 260+ 유저 기본 분석")
@@ -32,8 +30,11 @@ if filtered_df.empty:
     st.stop()
 
 # --- 4. 핵심 지표 (KPI) 표시 ---
-# 기존 df(성장 로그)가 아닌, 유저 기준 데이터셋 불러오기
-user_df = pd.read_csv('candidates_챌린저스_lv260_and_above.csv')
+user_df = load_and_preprocess_data('candidates_챌린저스_lv260_and_above.csv')
+
+# 컬럼명 통일 (한글 → 영문)
+user_df.rename(columns={'레벨': 'character_level'}, inplace=True)
+user_df['character_level'] = user_df['character_level'].astype(int)
 
 # 유저 수 계산
 total_users = len(user_df)
