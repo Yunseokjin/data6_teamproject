@@ -30,10 +30,10 @@ if filtered_df.empty:
     st.stop()
 
 # --- 4. 핵심 지표 (KPI) 표시 ---
-user_df = load_and_preprocess_data('candidates_챌린저스_lv260_and_above.csv')
+# 기존의 load_and_preprocess_data()는 growth_log용이므로 직접 로드
+user_df = pd.read_csv('candidates_챌린저스_lv260_and_above.csv')
 
-# 컬럼명 통일 (한글 → 영문)
-user_df.rename(columns={'레벨': 'level'}, inplace=True)
+# level 컬럼 처리
 user_df['level'] = user_df['level'].astype(int)
 
 # 유저 수 계산
