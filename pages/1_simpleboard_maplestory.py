@@ -3,21 +3,24 @@
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+import os # <-- os 모듈 추가
 
-# --- load_and_preprocess_data 함수 정의 시작 (utils.py 전체 내용) ---
-# 이 함수 안에 다른 코드가 끼어들지 않도록 주의
+# --- load_and_preprocess_data 함수 정의 시작 ---
 @st.cache_data
 def load_and_preprocess_data(file_path):
     """
     데이터를 로드하고 모든 페이지에 필요한 공통 전처리를 수행하는 함수.
     """
     try:
-        # 이 파일이 pages/ 안에 있으므로, 파일 경로는 상위 폴더를 가리킵니다.
-        df = pd.read_csv('../' + file_path) 
-           
+        # 파일 경로를 절대적으로 지정하여 Key Error 및 경로 오류를 해결
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        data_path = os.path.join(base_dir, '..', file_path) 
+        
+        df = pd.read_csv(data_path) 
+        
         # --- 모든 페이지에 필요한 공통 전처리 ---
         
-        # 1. 'user_status' 컬럼 생성
+        # 1. 'user_status' 컬럼 생성 (Key Error를 유발했던 로직)
         df['user_status'] = df['character_name'].apply(
             lambda x: '월드 리프 유저' if pd.isna(x) else '챌린저스 잔류 유저'
         )
@@ -35,30 +38,14 @@ def load_and_preprocess_data(file_path):
         
         return df
     except Exception as e:
-        # 이 오류가 현재 Key Error를 대신 표시합니다.
-        st.error(f"데이터 로드 및 전처리 중 오류 발생: {e}")
-        return pd.DataFrame()
-        # --- 데이터 불러오기 ---
-        # 함수를 호출하여 데이터 프레임을 로드합니다.
-        # 주의: 함수 정의 바로 다음에 이 호출 코드가 나와야 합니다.
-        
-        df = load_and_preprocess_data('growth_log_v2_f_v2.csv')
+        # 이제 오류가 발생하면 Streamlit에서 오류 메시지가 표시됩니다.
+        st.error(f"데이터 로드 및 전처리 중 오류 발생: {e}") 
+        return pd.DataFrame() 
+# --- load_and_preprocess_data 함수 정의 끝 ---
 
-# --- 챌린저스 260+ 랭킹 데이터 로드 (KPI 계산용) ---
-# pages 폴더에서 상위 디렉토리의 파일에 접근하기 위해 상대 경로 '../' 사용
-try:
-    df_ranking = pd.read_csv('../candidates_챌린저스_lv260_and_above.csv') 
-    # 레벨이 정수형이 아닐 경우를 대비해 변환 (오류 발생 시 무시)
-    df_ranking['level'] = pd.to_numeric(df_ranking['level'], errors='coerce')
-    df_ranking.dropna(subset=['level'], inplace=True)
-except FileNotFoundError:
-    # 파일 로드 실패 시 경고
-    st.error("🚨 'candidates_챌린저스_lv260_and_above.csv' 파일을 찾을 수 없습니다. (경로 확인 필요)")
-    df_ranking = None
-except Exception as e:
-    st.error(f"🚨 랭킹 파일 로드 중 오류 발생: {e}")
-    df_ranking = None
-    
+
+# --- 데이터 불러오기 ---
+df = load_and_preprocess_data('growth_log_v2_f_v2.csv')
 # --- 대시보드 UI 구성 ---
 st.title("🍁 챌린저스 서버 260+ 유저 기본 분석")
 # ⭐ 요청하신 기준일 언급 추가 (작은 글씨)
