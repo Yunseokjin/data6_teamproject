@@ -3,7 +3,6 @@
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-# from utils import load_and_preprocess_data # <- 이 줄은 삭제합니다.
 
 # --- load_and_preprocess_data 함수 정의 시작 (utils.py 전체 내용) ---
 # @st.cache_data 데코레이터를 사용하여 데이터 로딩을 캐싱합니다.
@@ -38,6 +37,7 @@ def load_and_preprocess_data(file_path):
         st.error(f"데이터 로드 및 전처리 중 오류 발생: {e}")
         return pd.DataFrame() # 오류 시 빈 DataFrame 반환
 # --- load_and_preprocess_data 함수 정의 끝 ---
+
 
 # --- 데이터 불러오기 ---
 # 모든 전처리는 이 파일의 함수가 책임집니다.
