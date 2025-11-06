@@ -3,24 +3,14 @@
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-# from .utils import load_and_preprocess_data # <- 이 코드는 삭제합니다.
-# from utils import load_and_preprocess_data # 1. 공통 도우미 임포트
-# .csv 파일 경로도 다시 한번 확인합니다. (utils.py가 루트에 있으므로)
-# df_ranking = pd.read_csv('../candidates_챌린저스_lv260_and_above.csv') # 이 줄도 확인
-# --- 데이터 불러오기 ---
-# 모든 전처리는 utils.py가 책임집니다.
+# from utils import load_and_preprocess_data # <- 이 줄은 삭제합니다.
 
-# 파일 위치: utils.py
-
-import pandas as pd
-import streamlit as st
-
+# --- load_and_preprocess_data 함수 정의 시작 (utils.py 전체 내용) ---
 # @st.cache_data 데코레이터를 사용하여 데이터 로딩을 캐싱합니다.
 @st.cache_data
 def load_and_preprocess_data(file_path):
     """
     데이터를 로드하고 모든 페이지에 필요한 공통 전처리를 수행하는 함수.
-    이 함수가 이제 '데이터의 유일한 진실 공급원'이 됩니다.
     """
     try:
         df = pd.read_csv(file_path)
@@ -41,20 +31,16 @@ def load_and_preprocess_data(file_path):
         df['character_level'] = pd.to_numeric(df['character_level'], errors='coerce')
         
         # 4. 길드 가입 여부 컬럼 생성
-        df['has_guild'] = df['character_guild_name'].notna()
-
-        # 5. 데이터 정제
-        df.dropna(subset=['ocid'], inplace=True)
+        df['has_guild'] = df['길드명'].apply(lambda x: True if pd.notna(x) else False)
         
         return df
-
-    except FileNotFoundError:
-        st.error(f"데이터 파일을 찾을 수 없습니다. '{file_path}' 경로를 확인해주세요.")
-        return pd.DataFrame() # 오류 발생 시 빈 데이터프레임 반환
     except Exception as e:
-        st.error(f"데이터 처리 중 오류 발생: {e}")
-        return pd.DataFrame()
+        st.error(f"데이터 로드 및 전처리 중 오류 발생: {e}")
+        return pd.DataFrame() # 오류 시 빈 DataFrame 반환
+# --- load_and_preprocess_data 함수 정의 끝 ---
 
+# --- 데이터 불러오기 ---
+# 모든 전처리는 이 파일의 함수가 책임집니다.
 df = load_and_preprocess_data('growth_log_v2_f_v2.csv')
 
 # --- 챌린저스 260+ 랭킹 데이터 로드 (KPI 계산용) ---
