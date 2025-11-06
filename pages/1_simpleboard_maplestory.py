@@ -37,6 +37,11 @@ def load_and_preprocess_data(file_path):
 # --- 2. 데이터 불러오기 ---
 df = load_and_preprocess_data('growth_log_v2_f_v2.csv')
 
+# ⭐⭐ 2-1. 데이터 로드 실패 시 앱 중단 ⭐⭐
+if df.empty or 'user_status' not in df.columns:
+    st.error("🚨 앱 실행 실패: 메인 데이터 파일을 찾을 수 없거나 데이터에 'user_status' 컬럼이 없습니다.")
+    st.stop()
+
 # --- 3. 챌린저스 260+ 랭킹 데이터 로드 (KPI 계산용) ---
 df_ranking = None # NameError 방지를 위해 미리 선언
 try:
