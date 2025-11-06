@@ -9,6 +9,20 @@ from utils import load_and_preprocess_data # 1. 공통 도우미 임포트
 # 모든 전처리는 utils.py가 책임집니다.
 df = load_and_preprocess_data('growth_log_v2_f_v2.csv')
 
+# --- 챌린저스 260+ 랭킹 데이터 로드 (KPI 계산용) ---
+# 사용자가 언급한 'candidates_챌린저스_lv260_and_above.csv' 파일 사용
+try:
+    df_ranking = pd.read_csv('candidates_챌린저스_lv260_and_above.csv')
+    # 레벨이 정수형이 아닐 경우를 대비해 변환 (오류 발생 시 무시)
+    df_ranking['level'] = pd.to_numeric(df_ranking['level'], errors='coerce')
+    df_ranking.dropna(subset=['level'], inplace=True)
+except FileNotFoundError:
+    st.error("🚨 'candidates_챌린저스_lv260_and_above.csv' 파일을 찾을 수 없습니다. KPI 계산에 오류가 발생할 수 있습니다.")
+    df_ranking = None
+except Exception as e:
+    st.error(f"🚨 랭킹 파일 로드 중 오류 발생: {e}")
+    df_ranking = None
+    
 # --- 대시보드 UI 구성 ---
 st.title("🍁 챌린저스 서버 260+ 유저 기본 분석")
 st.markdown("---")
@@ -29,18 +43,30 @@ if filtered_df.empty:
     st.warning("선택된 필터에 해당하는 데이터가 없습니다.")
     st.stop()
 
-# --- 4. 핵심 지표 (KPI) 표시 ---
-total_users = len(filtered_df)
-leaf_users = len(filtered_df[filtered_df['user_status'] == '월드 리프 유저'])
-remain_users = len(filtered_df[filtered_df['user_status'] == '챌린저스 잔류 유저'])
+# --- 4. 핵심 지표 (KPI) 표시 - 랭킹 파일 기반으로 수정 ---
+if df_ranking is not None:
+    # 1. 총 유저 수 (260레벨 이상)
+    total_users_260_plus = len(df_ranking)
+    
+    # 2. 270+ 유저 수
+    users_270_plus = len(df_ranking[df_ranking['level'] >= 270])
+    
+    # 3. 280+ 유저 수
+    users_280_plus = len(df_ranking[df_ranking['level'] >= 280])
 
-col1, col2, col3 = st.columns(3)
-col1.metric("총 유저 수", f"{total_users} 명")
-col2.metric("월드 리프 유저", f"{leaf_users} 명", f"{leaf_users/total_users:.1%}" if total_users > 0 else "0%")
-col3.metric("챌린저스 잔류 유저", f"{remain_users} 명", f"{remain_users/total_users:.1%}" if total_users > 0 else "0%")
-st.markdown("---")
+    col1, col2, col3 = st.columns(3)
+    
+    # 지표 표시
+    col1.metric("📊 총 유저 수 (260+)", f"{total_users_260_plus:,} 명", help="20250703 챌린저스 랭킹 기준")
+    col2.metric("✨ 270+ 유저 수", f"{users_270_plus:,} 명", f"{users_270_plus/total_users_260_plus:.1%}" if total_users_260_plus > 0 else "0%", help="20250703 챌린저스 랭킹 기준")
+    col3.metric("🌟 280+ 유저 수", f"{users_280_plus:,} 명", f"{users_280_plus/total_users_260_plus:.1%}" if total_users_260_plus > 0 else "0%", help="20250703 챌린저스 랭킹 기준")
+    st.markdown("---")
+else:
+    # 랭킹 파일 로드에 실패하면 기존의 KPI는 주석 처리하고 경고 메시지 표시
+    st.warning("⚠️ 랭킹 데이터 로드 실패로 핵심 지표를 표시할 수 없습니다. (아래 시각화는 기존 데이터 사용)")
+    st.markdown("---")
 
-# --- 5. 시각화 (기존 코드 전체 포함) ---
+# --- 5. 시각화 (기존 코드 유지) ---
 col_left, col_right = st.columns(2)
 
 with col_left:
