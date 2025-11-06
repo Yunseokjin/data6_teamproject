@@ -3,6 +3,11 @@
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+# ⭐⭐ 오류 해결을 위해 추가된 코드 ⭐⭐
+# sys.path에 현재 디렉토리(루트)를 추가하여 utils.py를 찾도록 합니다.
+import sys
+sys.path.append('.') 
+# from utils import load_and_preprocess_data # 이 코드는 그대로 유지
 from utils import load_and_preprocess_data # 1. 공통 도우미 임포트
 
 # --- 데이터 불러오기 ---
