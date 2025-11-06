@@ -10,18 +10,21 @@ from utils import load_and_preprocess_data # <-- 루트 폴더의 utils.py를 �
 df = load_and_preprocess_data('growth_log_v2_f_v2.csv')
 
 # --- 챌린저스 260+ 랭킹 데이터 로드 (KPI 계산용) ---
+
+# ⭐⭐⭐ 로드 실패 시에도 df_ranking이 None으로 정의되도록 try 블록 외부에 선언 ⭐⭐⭐
+df_ranking = None 
+
 try:
     # pages/에서 상위 디렉토리의 파일에 접근 (이전에 잘 작동했던 경로)
     df_ranking = pd.read_csv('../candidates_챌린저스_lv260_and_above.csv') 
     df_ranking['level'] = pd.to_numeric(df_ranking['level'], errors='coerce')
     df_ranking.dropna(subset=['level'], inplace=True)
 except FileNotFoundError:
-    st.warning("⚠️ 랭킹 데이터 파일을 찾을 수 없어 KPI를 표시할 수 없습니다.")
-    df_ranking = None
+    # 파일이 없을 경우 df_ranking은 None 상태로 유지
+    pass
 except Exception as e:
-    st.error(f"🚨 랭킹 파일 처리 중 오류 발생: {e}")
-    df_ranking = None
-
+    # 다른 오류 발생 시 df_ranking은 None 상태로 유지
+    pass
 
 # --- 대시보드 UI 구성 ---
 st.title("🍁 챌린저스 서버 260+ 유저 기본 분석")
