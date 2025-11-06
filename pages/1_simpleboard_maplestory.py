@@ -32,6 +32,23 @@ st.markdown("##### *랭킹 KPI 기준일: 2025년 7월 3일 챌린저스 1서버
 st.markdown("---")
 
 # ... (사이드바 및 filtered_df 생성 로직은 유지) ...
+# 사이드바 (필터)
+st.sidebar.header("🔎 필터")
+status_filter = st.sidebar.multiselect(
+    "유저 그룹 선택:",
+    options=df['user_status'].unique(),
+    default=df['user_status'].unique(),
+    key='simpleboard_status_filter' 
+)
+
+# ⭐⭐⭐⭐⭐ 누락된 filtered_df 정의 삽입 ⭐⭐⭐⭐⭐
+# 필터링된 데이터
+filtered_df = df[df['user_status'].isin(status_filter)] 
+
+if filtered_df.empty:
+    st.warning("선택된 필터에 해당하는 데이터가 없습니다.")
+    st.stop()
+
 
 # --- 4. 핵심 지표 (KPI) 표시 - 랭킹 파일 기반 로직 (복구) ---
 if df_ranking is not None:
