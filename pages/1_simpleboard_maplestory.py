@@ -14,7 +14,7 @@ def load_and_preprocess_data(file_path):
     try:
         # 이 파일이 pages/ 안에 있으므로, 파일 경로는 상위 폴더를 가리킵니다.
         df = pd.read_csv('../' + file_path) 
-        
+           
         # --- 모든 페이지에 필요한 공통 전처리 ---
         
         # 1. 'user_status' 컬럼 생성
@@ -35,16 +35,14 @@ def load_and_preprocess_data(file_path):
         
         return df
     except Exception as e:
-        # 파일 경로를 못 찾으면 이 오류가 나옵니다.
+        # 이 오류가 현재 Key Error를 대신 표시합니다.
         st.error(f"데이터 로드 및 전처리 중 오류 발생: {e}")
-        return pd.DataFrame() 
-# --- load_and_preprocess_data 함수 정의 끝 ---
-
-
-# --- 데이터 불러오기 ---
-# 함수를 호출하여 데이터 프레임을 로드합니다.
-# 주의: 함수 정의 바로 다음에 이 호출 코드가 나와야 합니다.
-df = load_and_preprocess_data('growth_log_v2_f_v2.csv')
+        return pd.DataFrame()
+        # --- 데이터 불러오기 ---
+        # 함수를 호출하여 데이터 프레임을 로드합니다.
+        # 주의: 함수 정의 바로 다음에 이 호출 코드가 나와야 합니다.
+        
+        df = load_and_preprocess_data('growth_log_v2_f_v2.csv')
 
 # --- 챌린저스 260+ 랭킹 데이터 로드 (KPI 계산용) ---
 # pages 폴더에서 상위 디렉토리의 파일에 접근하기 위해 상대 경로 '../' 사용
