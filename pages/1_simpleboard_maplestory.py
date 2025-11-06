@@ -3,12 +3,15 @@
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+# ⭐⭐⭐ 이 코드로 최종 수정합니다. ⭐⭐⭐
+import sys
+# sys.path에 상위 디렉토리(프로젝트 루트)를 추가합니다.
+sys.path.append('..') 
 
-# ⭐⭐⭐ 이전에 추가했던 sys.path 관련 코드를 모두 제거하고, ⭐⭐⭐
-# ⭐⭐⭐ 이 코드로 변경합니다. ⭐⭐⭐
-from .utils import load_and_preprocess_data # 1. 공통 도우미 임포트
-# (주의: from utils... 가 아니라 from .utils... 입니다.)
-
+# from .utils import load_and_preprocess_data # <- 이 코드는 삭제합니다.
+from utils import load_and_preprocess_data # 1. 공통 도우미 임포트
+# .csv 파일 경로도 다시 한번 확인합니다. (utils.py가 루트에 있으므로)
+# df_ranking = pd.read_csv('../candidates_챌린저스_lv260_and_above.csv') # 이 줄도 확인
 # --- 데이터 불러오기 ---
 # 모든 전처리는 utils.py가 책임집니다.
 df = load_and_preprocess_data('growth_log_v2_f_v2.csv')
