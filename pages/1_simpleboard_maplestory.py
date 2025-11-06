@@ -5,14 +5,15 @@ import plotly.express as px
 import streamlit as st
 
 # --- load_and_preprocess_data 함수 정의 시작 (utils.py 전체 내용) ---
-# @st.cache_data 데코레이터를 사용하여 데이터 로딩을 캐싱합니다.
+# 이 함수 안에 다른 코드가 끼어들지 않도록 주의
 @st.cache_data
 def load_and_preprocess_data(file_path):
     """
     데이터를 로드하고 모든 페이지에 필요한 공통 전처리를 수행하는 함수.
     """
     try:
-        df = pd.read_csv(file_path)
+        # 이 파일이 pages/ 안에 있으므로, 파일 경로는 상위 폴더를 가리킵니다.
+        df = pd.read_csv('../' + file_path) 
         
         # --- 모든 페이지에 필요한 공통 전처리 ---
         
@@ -34,13 +35,15 @@ def load_and_preprocess_data(file_path):
         
         return df
     except Exception as e:
+        # 파일 경로를 못 찾으면 이 오류가 나옵니다.
         st.error(f"데이터 로드 및 전처리 중 오류 발생: {e}")
-        return pd.DataFrame() # 오류 시 빈 DataFrame 반환
+        return pd.DataFrame() 
 # --- load_and_preprocess_data 함수 정의 끝 ---
 
 
 # --- 데이터 불러오기 ---
-# 모든 전처리는 이 파일의 함수가 책임집니다.
+# 함수를 호출하여 데이터 프레임을 로드합니다.
+# 주의: 함수 정의 바로 다음에 이 호출 코드가 나와야 합니다.
 df = load_and_preprocess_data('growth_log_v2_f_v2.csv')
 
 # --- 챌린저스 260+ 랭킹 데이터 로드 (KPI 계산용) ---
