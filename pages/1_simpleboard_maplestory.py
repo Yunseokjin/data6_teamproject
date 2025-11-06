@@ -33,13 +33,13 @@ if filtered_df.empty:
 user_df = load_and_preprocess_data('candidates_챌린저스_lv260_and_above.csv')
 
 # 컬럼명 통일 (한글 → 영문)
-user_df.rename(columns={'레벨': 'character_level'}, inplace=True)
-user_df['character_level'] = user_df['character_level'].astype(int)
+user_df.rename(columns={'레벨': 'level'}, inplace=True)
+user_df['level'] = user_df['level'].astype(int)
 
 # 유저 수 계산
 total_users = len(user_df)
-users_270_279 = len(user_df[(user_df['character_level'] >= 270) & (user_df['character_level'] <= 279)])
-users_280_plus = len(user_df[user_df['character_level'] >= 280])
+users_270_279 = len(user_df[(user_df['level'] >= 270) & (user_df['level'] <= 279)])
+users_280_plus = len(user_df[user_df['level'] >= 280])
 
 # KPI 표시
 st.subheader("📈 챌린저스 1 서버 유저 현황 (2025-07-03)")
