@@ -45,36 +45,18 @@ if filtered_df.empty:
     st.warning("선택된 필터에 해당하는 데이터가 없습니다.")
     st.stop()
 
-# --- 4. 핵심 지표 (KPI) 표시 - 랭킹 파일 기반으로 수정 ---
-if df_ranking is not None:
-    # 1. 총 유저 수 (260레벨 이상)
-    total_users_260_plus = len(df_ranking)
-    
-    # 2. 270~279 유저 수 (270 이상, 280 미만)
-    users_270_to_279 = len(df_ranking[(df_ranking['level'] >= 270) & (df_ranking['level'] <= 279)])
-    
-    # 3. 280+ 유저 수 (280 이상)
-    users_280_plus = len(df_ranking[df_ranking['level'] >= 280])
+# --- 4. 핵심 지표 (KPI) 표시 (안정 버전으로 복구) ---
+total_users = len(filtered_df)
+leaf_users = len(filtered_df[filtered_df['user_status'] == '월드 리프 유저'])
+remain_users = len(filtered_df[filtered_df['user_status'] == '챌린저스 잔류 유저'])
 
-    col1, col2, col3 = st.columns(3)
-    
-    # 지표 표시 (레이블은 270~279로 명확히 표시)
-    col1.metric("📊 총 유저 수 (260+)", f"{total_users_260_plus:,} 명", help="챌린저스 1서버 랭킹 기준")
-    col2.metric("✨ 270~279 유저 수", f"{users_270_to_279:,} 명", f"{users_270_to_279/total_users_260_plus:.1%}" if total_users_260_plus > 0 else "0%", help="챌린저스 1서버 랭킹 기준")
-    col3.metric("🌟 280+ 유저 수", f"{users_280_plus:,} 명", f"{users_280_plus/total_users_260_plus:.1%}" if total_users_260_plus > 0 else "0%", help="챌린저스 1서버 랭킹 기준")
-    st.markdown("---")
-else:
-    # 랭킹 파일 로드에 실패하면 초기 KPI를 임시로 표시
-    total_users = len(filtered_df)
-    leaf_users = len(filtered_df[filtered_df['user_status'] == '월드 리프 유저'])
-    remain_users = len(filtered_df[filtered_df['user_status'] == '챌린저스 잔류 유저'])
+col1, col2, col3 = st.columns(3)
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric("📊 총 유저 수 (임시)", f"{total_users:,} 명")
-    col2.metric("✨ 월드 리프 유저 수", f"{leaf_users:,} 명", f"{leaf_users/total_users:.1%}" if total_users > 0 else "0%")
-    col3.metric("🌟 챌린저스 잔류 유저 수", f"{remain_users:,} 명", f"{remain_users/total_users:.1%}" if total_users > 0 else "0%")
-    st.warning("⚠️ 랭킹 데이터 로드 실패. 임시 KPI 표시 중.")
-    st.markdown("---")
+# 지표 표시
+col1.metric("📊 총 유저 수", f"{total_users:,} 명")
+col2.metric("✨ 월드 리프 유저 수", f"{leaf_users:,} 명", f"{leaf_users/total_users:.1%}" if total_users > 0 else "0%")
+col3.metric("🌟 챌린저스 잔류 유저 수", f"{remain_users:,} 명", f"{remain_users/total_users:.1%}" if total_users > 0 else "0%")
+st.markdown("---")
 # --- 5. 시각화 (유지) ---
 col_left, col_right = st.columns(2)
 
