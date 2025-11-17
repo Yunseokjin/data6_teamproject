@@ -177,45 +177,53 @@ else:
         text=label_metrics["착용 비율(%)"].map(lambda v: f"{v:.1f}%"),
         color="라벨 유형",
         range_y=[0, 100],
-        title="코디 유저 라벨별 착용 침투율",
+        title="코디 유저 착용 라벨 비율",
     )
     fig_labels.update_traces(textposition="outside")
     st.plotly_chart(fig_labels, use_container_width=True)
     st.caption("※ 블랙라벨 컬럼이 분리되어 있지 않아 레드라벨 수치를 대표값으로 사용했습니다.")
 
 st.markdown("---")
-st.subheader("4️⃣ 믹스 염색 · 렌즈 활용 및 커스텀 강도")
+st.subheader("4️⃣ 믹스 염색 · 렌즈 활용 및 커스텀 비율")
+
+# 믹스 사용 유저와 커스텀(50:50이 아닌 비율) 유저 비율 계산
+hair_mix_users = filtered_df[filtered_df["mix_hair_flag"] > 0]
+face_mix_users = filtered_df[filtered_df["mix_face_flag"] > 0]
+
 mix_stats = {
-    "헤어 믹스염색 적용률": (filtered_df["mix_hair_flag"] > 0).mean() * 100,
-    "믹스렌즈(성형) 적용률": (filtered_df["mix_face_flag"] > 0).mean() * 100,
-    "평균 헤어 커스텀 강도": filtered_df.loc[
-        filtered_df["mix_hair_flag"] > 0, "mix_hair_ratio"
-    ].mean()
-    if (filtered_df["mix_hair_flag"] > 0).any()
-    else 0,
-    "평균 렌즈 커스텀 강도": filtered_df.loc[
-        filtered_df["mix_face_flag"] > 0, "mix_face_ratio"
-    ].mean()
-    if (filtered_df["mix_face_flag"] > 0).any()
-    else 0,
+    # 전체 유저 기준 믹스 사용률
+    "헤어 믹스염색 사용률": (filtered_df["mix_hair_flag"] > 0).mean() * 100,
+    "성형 믹스렌즈 사용률": (filtered_df["mix_face_flag"] > 0).mean() * 100,
+    # 믹스 사용자 중 50:50이 아닌 커스텀 비율 선택 유저 비중
+    "헤어 커스텀 믹스 비율": (
+        (hair_mix_users["mix_hair_ratio"] != 50).mean() * 100
+        if not hair_mix_users.empty
+        else 0
+    ),
+    "성형 커스텀 믹스 비율": (
+        (face_mix_users["mix_face_ratio"] != 50).mean() * 100
+        if not face_mix_users.empty
+        else 0
+    ),
 }
 
 metric_cols = st.columns(4)
 metric_labels = list(mix_stats.keys())
 for idx, col in enumerate(metric_cols):
-    value = mix_stats[metric_labels[idx]]
-    col.metric(metric_labels[idx], f"{value:.1f}%")
+    label = metric_labels[idx]
+    value = mix_stats[label]
+    col.metric(label, f"{value:.1f}%")
 
 mix_detail = pd.DataFrame(
     {
         "구분": ["헤어 믹스염색", "성형 믹스렌즈"],
-        "적용률(%)": [
-            mix_stats["헤어 믹스염색 적용률"],
-            mix_stats["믹스렌즈(성형) 적용률"],
+        "사용률(%)": [
+            mix_stats["헤어 믹스염색 사용률"],
+            mix_stats["성형 믹스렌즈 사용률"],
         ],
-        "평균 커스텀 강도(%)": [
-            mix_stats["평균 헤어 커스텀 강도"],
-            mix_stats["평균 렌즈 커스텀 강도"],
+        "커스텀 믹스 비율(%)": [
+            mix_stats["헤어 커스텀 믹스 비율"],
+            mix_stats["성형 커스텀 믹스 비율"],
         ],
     }
 ).round(1)
@@ -223,8 +231,8 @@ st.dataframe(mix_detail, hide_index=True)
 
 st.markdown(
     """
-    - 믹스염색/믹스렌즈 적용률은 해당 기능을 사용한 유저 비중입니다.
-    - 커스텀 강도는 믹스 기능을 사용한 유저들의 평균 색상 가중치(%)를 의미합니다.
+    - 사용률(%)은 전체 유저 중 믹스염색/믹스렌즈를 사용한 유저 비중입니다.
+    - 커스텀 믹스 비율(%)은 믹스를 사용한 유저 중에서 비율이 50:50이 **아닌** 유저의 비중입니다.
     """
 )
 
